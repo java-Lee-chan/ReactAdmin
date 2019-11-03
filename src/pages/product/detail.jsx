@@ -18,7 +18,7 @@ export default class ProductDetail extends Component {
   }
 
   async componentDidMount() {
-    // 得当当前商品的分类ID
+    // 得到当前商品的分类ID
     const {pCategoryId, categoryId} = this.props.location.state.product;
     if(pCategoryId === '0'){  // 一级分类下的商品
       const result = await reqCategory(categoryId);
@@ -77,7 +77,7 @@ export default class ProductDetail extends Component {
           </Item>
           <Item>
             <span className="left">所属分类:</span>
-            <span>{cName1 + cName2 ? '-->' : '' +cName2}</span>
+            <span>{cName1} {cName2 ? '-->'+cName2 : ''}</span>
           </Item>
           <Item>
             <span className="left">商品图片:</span>
