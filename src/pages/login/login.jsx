@@ -35,7 +35,7 @@ class Login extends Component {
         const result = await reqLogin(username, password); // {status: 0, data: {}}  {status: 1, msg: ''}
         if(result.status === 0){  // 登录成功
           // 提示登录成功
-          message.success('登陆成功');
+          message.success('登陆成功', 1);
           
           // 保存user
           const user = result.data;
