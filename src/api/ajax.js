@@ -19,7 +19,7 @@ export default function ajax(url, data = {}, method = 'GET'){
     if(method === 'GET'){
       promise = axios.get(url, {  // 配置对象
         params: data  // 指定请求参数
-      })
+      });
     }else {
       promise = axios.post(url, data);
     }

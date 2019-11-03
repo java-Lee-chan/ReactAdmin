@@ -213,19 +213,222 @@ day02
    - Menu/Item/SubMenu
 
 2. 使用 react-router-dom
-   - withRouter()：包装非路由组件，给其传入history/location/match属性
+
+   - withRouter()：包装非路由组件，给其传入 history/location/match 属性
    - history：push()/replace()/goBack()
-   - location：pathname属性
-   - match：params属性
+   - location：pathname 属性
+   - match：params 属性
 
-3. componentWillMount与componentDidMount的比较
-   - componentWillMount：在第一次render()前调用一次，为第一次render()准备数据(同步)
-   - componentDidMount：在第一次render()之后调用一次，启动异步任务，后面异步更新状态重新render
+3. componentWillMount 与 componentDidMount 的比较
 
-4. 根据动态生成Item和SubMenu数组
+   - componentWillMount：在第一次 render()前调用一次，为第一次 render()准备数据(同步)
+   - componentDidMount：在第一次 render()之后调用一次，启动异步任务，后面异步更新状态重新 render
+
+4. 根据动态生成 Item 和 SubMenu 数组
+
    - map() + 递归：多级菜单列表
    - reduce() + 递归：多级菜单列表
 
-5. 2个问题
+5. 2 个问题
    - 刷新时如何选中对应的菜单项
    - 刷新子菜单路径时，自动打开子菜单列表
+
+day03
+
+## 1. Header 组件
+
+1. 界面静态布局
+   - 三角形效果
+2. 获取登录用户的名称显示
+   - memoryUtils
+3. 当前时间
+   - 循环定时器，每个 1s 更新当前时间状态
+   - 格式化指定时间：dateUtils
+4. 天气预报
+   - 使用 jsonp 库发 jsonp 请求百度天气预报接口
+   - 对 jsonp 请求的理解
+5. 当前导航项的标题
+   - 得到当前请求的路由 path: withRouter()包装非路由组件
+   - 根据 path 在 menuList 中遍历查找对应的 item 的 title
+6. 退出登录
+   - Modal 组件显示提示
+   - 清除保存的 user
+   - 跳转到 login
+
+## 2. jsonp 解决 ajax 跨域的原理
+
+1. jsonp 只能解决 GET 类型的 ajax 请求跨域问题
+2. jsonp 请求不是 ajax 请求，而是一般的 get 请求
+3. 基本原理
+   - 浏览器端：
+     - 动态生成`<script>`来请求后台接口(src 就是接口的 url)
+     - 定义好用于接收响应数据的函数(fn)，并将函数名通过请求参数提交给后台(如：callback=fn)
+   - 服务器端：
+     - 接收到请求处理产生结果数据后，返回一个函数调用的 js 代码，并将结果数据作为实参传入函数调用
+   - 浏览器端：
+     - 收到响应自动执行函数调用的 js 代码，也就执行了提前定义好的回调函数，并得到了需要的结果数据
+
+day04：Category 组件
+
+## 1. 使用 antd 组件构建分类列表界面
+
+1. Card
+2. Table
+3. Button
+4. Icon
+
+## 2. 相关接口请求函数
+
+1. 获取一级/二级分类列表
+2. 添加分类
+3. 更新分类
+
+## 3. 动态显示一级分类列表
+
+1. 设计一级分类列表的状态：categorys
+2. 异步获取一级分类列表：componentDidMount(){}
+3. 更新状态，显示
+
+## 4. 显示二级分类列表
+
+1. 设计状态：subCategorys/parentId/parentName
+2. 显示二级分类列表：根据 parentId 状态值，异步获取分类列表
+3. setState()的问题
+   - setState()更新状态是异步更新的，直接读取状态值还是旧的状态值
+   - setState({}, [callback])，回调函数是在状态更新且界面更新之后执行，可以在此获取最新的状态
+
+## 5. 更新分类
+
+1. 界面
+
+   - antd 组件：Modal, Form, Input
+   - 显示/隐藏：showStatus 状态为 2/0
+
+2. 功能
+   - 父组件(Category)得到子组件(UpdateForm)的数据(form)
+   - 调用更新分类的接口
+   - 重新获取分类列表
+
+day05
+
+## 1. 添加分类
+
+1. 界面
+   - antd 组件：Modal，Form，Select，Input
+   - 显示/隐藏：showStatus 状态为 1/0
+2. 功能：
+   - 父组件(Category)得到子组件(AddForm)的数据(form)
+   - 调用更新分类的接口
+   - 重新获取分类列表
+
+## 2. Product 整体路由
+
+1. 配置子路由：
+
+   - ProductHome / ProductDetail / ProductAddUpdate
+   - `<Route>` / `<Switch>` / `<Redirect>`
+
+2. 匹配路由的逻辑
+   - 默认：逐层匹配 `<Route path='/product' component={ProductHome} />`
+   - exact 属性：完全匹配
+
+## 3. 分页列表(2 种)
+
+1. 纯前台分页
+   - 请求获取数据：一次性获取所有数据，翻页时不需要再发请求
+   - 请求接口：
+     - 不需要指定请求参数：页码(pageNum)和每页数量(pageSize)
+     - 响应数据：所有数据的数组
+2. 基于后台的分页
+   - 请求获取数据：每次只获取当前页的数据，翻页时要再发请求
+   - 请求接口：需要指定请求参数：页码(pageNum)和每页数量(pageSize)
+   - 响应数据：当前页数据的数组 + 总记录数(total)
+3. 如何选择
+   - 基本根据数据多少来选择
+
+## 4. ProductHome 组件
+
+1. 分页显示
+
+   - 界面：Card / Table / Select / Icon / Input / Button
+   - 状态： products/ total
+   - 接口请求函数需要的数据：pageNum，pageSize
+   - 异步获取第一页数据显示
+     - 调用分页的接口请求函数，获取到当前页的 products 和总记录数 total
+     - 更新状态：products / total
+   - 翻页：
+     - 绑定翻页的监听，监听回调需要得到 pageNum
+     - 异步获取指定页码的数据显示
+
+2. 搜索分页
+
+   - 接口请求函数需要的数据：
+     - pageSize：每页的条目数
+     - pageNum：当前请求第几页(从 1 开始)
+     - productDesc / productName: searchName 根据商品描述/名称搜索
+   - 状态：searchType / searchName / 在用户操作时实时收集数据
+   - 异步搜索显示分页列表
+     - 如果 searchName 有值，调用搜索的接口请求函数获取数据并更新状态
+
+3. 更新商品的状态
+
+   - 初始显示：根据 product 的 status 属性来显示 status = 1/2
+   - 点击切换：
+     - 绑定点击监听
+     - 异步请求更新状态
+
+4. 进入详情页面
+
+   - `history.push('product/detail', {product})`
+
+5. 进入添加界面
+   - `history.push('/product/addupdate')`
+
+## 5. ProductDetail 组件
+
+1. 读取商品数据：location.state.product
+2. 显示商品信息
+3. 异步显示商品所属分类的名称
+   - pCategoryId==0: 异步获取 categoryId 的分类名称
+   - pCategoryId!=0: 异步获取 pCategoryId/categoryId 的分类名称
+4. Promise.all([promise1, promise2])
+   - 返回值是 promise
+   - 异步得到的是所有 promise 的结果的数组
+   - 特点：一次发多个请求，只有当所有请求都成功，才成功，并得到成功的数据，一旦有一个失败，就失败
+
+day06
+
+## 1. ProductAddUpdate
+
+1. 基本界面
+   - Card / Form / Input / TextArea / Button
+   - FormItem的label标题和layout
+
+2. 分类的级联列表
+   - Cascader的基本使用
+   - 异步获取一级分类列表，生成一级分类options
+   - 如果当前是更新二级分类的商品，异步获取对应的二级分类列表，生成二级分类options，并添加为对应option的children
+   - async 函数返回值是一个新promise对象，promise的结果和值由async函数的结果决定
+   - 当选择某个一级分类项时，异步获取对应的二级分类列表，生成二级分类options，并添加为对应option的children
+
+3. 表单数据收集与表单验证
+
+## 2. PicturesWall
+
+1. antd组件
+   - Upload / Modal / Icon
+   - 根据实例DEMO改造编写
+
+2. 上传图片
+   - 在`<Upload>`上配置接口的path和请求参数名
+   - 监视文件状态的改变，上传中 / 上传完成 / 删除
+   - 在上传成功后，保存好相关消息：name / url
+   - 为父组件提供获取已上传图片文件名数组的方法
+
+3. 删除图片
+   - 当文件状态变为删除时，调用删除图片的接口删除上传到后台的图片
+
+4. 父组件调用子组件对象的方法：使用 ref 技术
+   - 创建ref容器：this.pw = React.createRef
+   - 将ref容器交给需要获取的标签对象：`<PicturesWall ref={this.pw}/>` 自动将标签对象添加为pw对象
+   - 通过ref容器读取标签元素：this.pw.current
