@@ -13,9 +13,6 @@ import { message } from 'antd';
 // 登陆
 export const reqLogin = (username, password) => ajax('/login', {username, password}, 'POST');
 
-// 添加用户
-export const reqAddUser = (user) => ajax('/manage/user/add', user, 'POST');
-
 // 获取一级/二级分类的列表
 export const reqCategorys = (parentId) => ajax('/manage/category/list', {parentId});
 
@@ -48,8 +45,25 @@ export const reqDeleteImg = (name) => ajax('/manage/img/delete', {name}, 'POST')
 // 添加/修改商品
 export const reqAddOrUpdateProduct = (product) => ajax('/manage/product/' + (product._id ? 'update':'add'), product, 'POST');
 
+
+// 获取所有角色的列表
+export const reqRoles = () => ajax('/manage/role/list'); 
+// 添加角色
+export const reqAddRole = (roleName) => ajax('/manage/role/add', {roleName}, 'POST');
+// 更新角色
+export const reqUpdateRole = (role) => ajax('/manage/role/update', role, 'POST');
+
+// 获取所有用户的列表
+export const reqUsers= () => ajax('/manage/user/list');
+// 删除指定用户
+export const reqDeleteUser = (userId) => ajax('/manage/user/delete', {userId},'POST');
+// 添加/更新用户
+export const reqAddOrUpdateUser = (user) => ajax('/manage/user/' + (user._id? 'update': 'add'), user, 'POST');
+
+
+
 /* 
-jsonp请求的接口请求函数
+jsonp请求的接口请求函数 
 `http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`
 */
 export const reqWeather = (city) => {
