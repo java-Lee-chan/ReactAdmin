@@ -1,18 +1,19 @@
 import React, {Component} from 'react';
 import {Card, Button, Table, Modal, message} from 'antd';
+import {connect} from 'react-redux';
+
+import {logout} from '../../redux/actions';
 
 import AddForm from './add-form';
 import AuthForm from './auth-form';
 import {PAGE_SIZE} from '../../utils/constants';
 import {reqRoles, reqAddRole, reqUpdateRole} from '../../api';
-import memoryUtils from '../../utils/memoryUtils.js';
-import storageUtils from '../../utils/storageUtils.js';
 import {formatDate} from '../../utils/dateUtils.js';
 
 /* 
 角色路由
 */
-export default class Role extends Component {
+class Role extends Component {
 
   state = {
     roles: [],    // 所有角色的列表
@@ -99,16 +100,14 @@ export default class Role extends Component {
     // 得到最新的menus
     const menus = this.auth.current.getMenus();
     role.menus = menus;
-    role.auth_name = memoryUtils.user.username;
+    role.auth_name = this.props.user.username;
     
     // 请求更新
     const result = await reqUpdateRole(role);
     if(result.status === 0){
       // 如果当前更新的是自己角色的权限，强制退出
-      if(role._id === memoryUtils.user.role_id){
-        memoryUtils.user = {};
-        storageUtils.removeUser();
-        this.props.history.replace('/login');
+      if(role._id === this.props.user.role_id){
+        this.props.logout();
         message.warning('当前用户角色权限修改，请重新登录', 1);
       }else {
         message.success('设置角色权限成功', 1);
@@ -186,3 +185,8 @@ export default class Role extends Component {
     )
   }
 }
+
+export default connect(
+  state => ({user: state.user}),
+  {logout}
+)(Role);

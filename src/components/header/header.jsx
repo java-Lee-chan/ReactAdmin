@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import { Modal } from 'antd';
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
 
+import {logout} from '../../redux/actions';
 import LinkButton from '../../components/link-button/link-button';
 import {formatDate} from '../../utils/dateUtils';
-import memoryUtils from '../../utils/memoryUtils';
-import storageUtils from '../../utils/storageUtils';
-import menuList from '../../config/menuConfig.js';
 import {reqWeather}from '../../api';
 
 import './header.less';
@@ -22,6 +22,11 @@ class Header extends Component {
     weather: '',  // 天气的文本
   }
 
+  static propTypes = {
+    headTitle: PropTypes.string.isRequired,
+    user: PropTypes.object.isRequired
+  }
+
   getTime = () => {
     // 每个1s获取当前时间，并更新状态数据currenTime
     this.intervalId = setInterval(() => {
@@ -35,24 +40,6 @@ class Header extends Component {
     this.setState({dayPictureUrl, weather});
   }
 
-  getTitle = () => {
-    // 得到当前请求路径
-    const path = this.props.location.pathname;
-    let title;
-    menuList.forEach(item => {
-      if(item.key === path){  // 如果当前item对象的key与path一样，item的title就是需要显示的title
-        title = item.title
-      }else if(item.children){
-        // 在所有子item中查找匹配的
-        const cItem = item.children.find(cItem => path.indexOf(cItem.key) === 0);
-        if(cItem) {
-          title = cItem.title;
-        }
-      }
-    });
-    return title
-  }
-
   /* 
   退出登录
   */
@@ -60,13 +47,8 @@ class Header extends Component {
     // 显示确认框
     Modal.confirm({
       content: '确定退出吗',
-      onOk: () => {
-        // 删除保存的user数据
-        storageUtils.removeUser();
-        memoryUtils.user = {};
-
-        // 跳转到login
-        this.props.history.replace('/login');
+      onOk: () => {  
+        this.props.logout();
       }
     })
   }
@@ -90,8 +72,8 @@ class Header extends Component {
   }
   render() {
     const {currentTime, dayPictureUrl, weather} = this.state;
-    const {username} = memoryUtils.user;
-    const title = this.getTitle();
+    const {username} = this.props.user;
+    const title = this.props.headTitle;
     return (
       <div className="header">
         <div className="header-top">
@@ -110,4 +92,7 @@ class Header extends Component {
     )
   }
 }
-export default withRouter(Header);
+export default connect(
+  state => ({headTitle: state.headTitle, user: state.user}),
+  {logout}
+)(withRouter(Header));
