@@ -5,6 +5,8 @@ import LinkButton from '../../components/link-button/link-button';
 
 import {reqProducts, reqSearchProducts, reqUpdateStatus} from '../../api';
 import {PAGE_SIZE} from '../../utils/constants';
+import memoryUtils from '../../utils/memoryUtils';
+
 const Option = Select.Option;
 /* 
 Product的默认子路由组件
@@ -60,14 +62,27 @@ export default class ProductHome extends Component {
         render: (product) => (
           <span>
             {/* 将product对象作为state传递给目标路由组件 */}
-            <LinkButton onClick={() => {this.props.history.push('/product/detail', {product})}}>详情</LinkButton>
-            <LinkButton onClick={() => {this.props.history.push('/product/addupdate', product)}}>修改</LinkButton>
+            <LinkButton onClick={() => this.showDetail(product)}>详情</LinkButton>
+            <LinkButton onClick={() => this.showUpdate(product)}>修改</LinkButton>
           </span>
         )
       },
     ];
   }
 
+  // 显示商品详情界面
+  showDetail = (product) => {
+    // 缓存product对象 ==> 给detail组件使用
+    memoryUtils.product = product
+    this.props.history.push('/product/detail');
+  }
+  
+  // 显示修改商品界面
+  showUpdate= (product) => {
+    // 缓存product对象 ==> 给update组件使用
+    memoryUtils.product = product
+    this.props.history.push('/product/addUpdate');
+  }
   // 获取指定页码的列表数据显示
   getProducts = async (pageNum) => {
     this.pageNum = pageNum; // 保存pageNum，让其他方法可以看到

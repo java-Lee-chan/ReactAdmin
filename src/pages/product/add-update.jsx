@@ -5,6 +5,7 @@ import PicturesWall from './pictures-wall';
 import RichTextEditor from './rich-text-editor';
 import LinkButton from '../../components/link-button/link-button';
 import {reqCategorys, reqAddOrUpdateProduct} from '../../api';
+import memoryUtils from '../../utils/memoryUtils';
 
 const Item = Form.Item;
 const TextArea = Input.TextArea;
@@ -148,15 +149,20 @@ class ProductAddUpdate extends Component {
 
   componentWillMount() {
     // 取出携带的state
-    const product = this.props.location.state;  // 如果是添加没值，否则有值
+    const product = memoryUtils.product;  // 如果是添加没值，否则有值
     // 保存是否是更新的标识
-    this.isUpdate = !!product;
+    this.isUpdate = !!product._id;
     // 保存商品(如果没有，保存是{})
     this.product = product || {};
   }
 
   componentDidMount() {
     this.getCategorys('0'); 
+  }
+
+  // 在卸载之前清除保存的数据
+  componentWillUnmount() {
+    memoryUtils.product = {};
   }
 
   render() {

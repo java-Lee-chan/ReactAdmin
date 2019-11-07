@@ -11,7 +11,7 @@ import {
 import storageUtils from '../utils/storageUtils';
 
 // 用来管理头部标题的reducer函数
-const initHeadTitle = '首页';
+const initHeadTitle = '';
 function headTitle(state=initHeadTitle, action) {
   switch(action.type){
     case SET_HEAD_TITLE:
